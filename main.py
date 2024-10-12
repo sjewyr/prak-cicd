@@ -4,7 +4,6 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QApplication,
     QHBoxLayout,
-    QTextEdit,
     QMainWindow,
     QVBoxLayout,
     QLineEdit,
@@ -36,19 +35,19 @@ class CalculatorWindow(QMainWindow):
 
         self.plus_button = QPushButton("+", self)
         self.numbers_layout.addWidget(self.plus_button, 0, 3)
-        self.plus_button.clicked.connect(self.plus)
+        self.plus_button.clicked.connect(lambda _, x="+": self.process_operator(operator=x))  
 
         self.minus_button = QPushButton("-", self)
         self.numbers_layout.addWidget(self.minus_button, 1, 3)
-        self.minus_button.clicked.connect(self.minus)
+        self.minus_button.clicked.connect(lambda _, x="-": self.process_operator(operator=x))  
 
         self.divide_button = QPushButton("/", self)
         self.numbers_layout.addWidget(self.divide_button, 2, 3)
-        self.divide_button.clicked.connect(self.divide)
+        self.divide_button.clicked.connect(lambda _, x="/": self.process_operator(operator=x))  
 
         self.multiply_button = QPushButton("*", self)
         self.numbers_layout.addWidget(self.multiply_button, 3, 3)
-        self.multiply_button.clicked.connect(self.multiply)
+        self.multiply_button.clicked.connect(lambda _, x="*": self.process_operator(operator=x))  
 
         self.memrc_button = QPushButton("M", self)
         self.numbers_layout.addWidget(self.memrc_button, 0, 2)
@@ -105,33 +104,26 @@ class CalculatorWindow(QMainWindow):
         self.last_value = 0
 
     def keyPressEvent(self, a0):
-        nums = {
-            Qt.Key.Key_0: 0,
-            Qt.Key.Key_1: 1,
-            Qt.Key.Key_2: 2,
-            Qt.Key.Key_3: 3,
-            Qt.Key.Key_4: 4,
-            Qt.Key.Key_5: 5,
-            Qt.Key.Key_6: 6,
-            Qt.Key.Key_7: 7,
-            Qt.Key.Key_8: 8,
-            Qt.Key.Key_9: 9,
-        }
-        if a0.key() in nums:
-            self.number_pressed(num=str(nums[a0.key()]))
-        return super().keyPressEvent(a0)
-
-    def plus(self):
-        self.process_operator("+")
-
-    def minus(self):
-        self.process_operator("-")
-
-    def divide(self):
-        self.process_operator("/")
-
-    def multiply(self):
-        self.process_operator("*")
+        key = a0.key()
+        if Qt.Key.Key_0 <= key <= Qt.Key.Key_9:
+            self.number_pressed(num=str(key - Qt.Key.Key_0))
+        elif key == Qt.Key.Key_Plus:
+            self.process_operator("+")
+        elif key == Qt.Key.Key_Minus:
+            self.process_operator("-")
+        elif key == Qt.Key.Key_Asterisk:
+            self.process_operator("*")
+        elif key == Qt.Key.Key_Slash:
+            self.process_operator("/")
+        elif key == Qt.Key.Key_Equal:
+            self.equals
+        elif key == Qt.Key.Key_Backspace:
+            self.backspace
+        elif key == Qt.Key.Key_Enter or key == Qt.Key.Key_Return:
+            self.equals()
+        # TODO: add more key bindings for sin, cos, tan, sqrt, etc.
+        else:
+            super().keyPressEvent(a0)
 
     def equals(self):
         if self.pending_operator is not None:
@@ -145,14 +137,14 @@ class CalculatorWindow(QMainWindow):
                     self.last_value *= current_value
                 elif self.pending_operator == "/":
                     if current_value == 0:
-                        raise ZeroDivisionError("Нельзя делить на ноль")
+                        raise ZeroDivisionError("Ошибка: Деление на 0")
                     self.last_value /= current_value
                 self.monitor.setText(str(self.last_value))
                 self.pending_operator = None
             except ZeroDivisionError as e:
-                self.monitor.setText("Error: Деление на 0")
+                self.monitor.setText("Ошибка: Деление на 0")
             except Exception as e:
-                self.monitor.setText("Error")
+                self.monitor.setText("Ошибка")
 
     def clear(self):
         self.monitor.clear()
@@ -179,7 +171,7 @@ class CalculatorWindow(QMainWindow):
             self.pending_operator = operator
             self.monitor.clear()
         except Exception as e:
-            self.monitor.setText("Error")
+            self.monitor.setText("Ошибка")
 
     def memplus(self):
         try:
