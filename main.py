@@ -35,19 +35,27 @@ class CalculatorWindow(QMainWindow):
 
         self.plus_button = QPushButton("+", self)
         self.numbers_layout.addWidget(self.plus_button, 0, 3)
-        self.plus_button.clicked.connect(lambda _, x="+": self.process_operator(operator=x))  
+        self.plus_button.clicked.connect(
+            lambda _, x="+": self.process_operator(operator=x)
+        )
 
         self.minus_button = QPushButton("-", self)
         self.numbers_layout.addWidget(self.minus_button, 1, 3)
-        self.minus_button.clicked.connect(lambda _, x="-": self.process_operator(operator=x))  
+        self.minus_button.clicked.connect(
+            lambda _, x="-": self.process_operator(operator=x)
+        )
 
         self.divide_button = QPushButton("/", self)
         self.numbers_layout.addWidget(self.divide_button, 2, 3)
-        self.divide_button.clicked.connect(lambda _, x="/": self.process_operator(operator=x))  
+        self.divide_button.clicked.connect(
+            lambda _, x="/": self.process_operator(operator=x)
+        )
 
         self.multiply_button = QPushButton("*", self)
         self.numbers_layout.addWidget(self.multiply_button, 3, 3)
-        self.multiply_button.clicked.connect(lambda _, x="*": self.process_operator(operator=x))  
+        self.multiply_button.clicked.connect(
+            lambda _, x="*": self.process_operator(operator=x)
+        )
 
         self.memrc_button = QPushButton("M", self)
         self.numbers_layout.addWidget(self.memrc_button, 0, 2)
@@ -116,9 +124,9 @@ class CalculatorWindow(QMainWindow):
         elif key == Qt.Key.Key_Slash:
             self.process_operator("/")
         elif key == Qt.Key.Key_Equal:
-            self.equals
+            self.equals()
         elif key == Qt.Key.Key_Backspace:
-            self.backspace
+            self.backspace()
         elif key == Qt.Key.Key_Enter or key == Qt.Key.Key_Return:
             self.equals()
         # TODO: add more key bindings for sin, cos, tan, sqrt, etc.
