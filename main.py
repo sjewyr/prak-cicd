@@ -22,10 +22,12 @@ class CalculatorWindow(QMainWindow):
         self.centralWidget().layout().addWidget(self.monitor)
         self.numbers_layout = QGridLayout()
         self.centralWidget().layout().addLayout(self.numbers_layout)
+
         self.buttons = [QPushButton(str(i), self) for i in range(1, 10)]
         for idx, but in enumerate(self.buttons):
             but.clicked.connect(lambda _, x=str(idx + 1): self.number_pressed(num=x))
             self.numbers_layout.addWidget(but, idx // 3, idx % 3)
+
         self.buttons.append(QPushButton("0", self))
         self.numbers_layout.addWidget(self.buttons[-1], 3, 1)
         self.buttons[-1].clicked.connect(lambda _, x="0": self.number_pressed(num=x))
@@ -46,6 +48,22 @@ class CalculatorWindow(QMainWindow):
         self.numbers_layout.addWidget(self.multiply_button, 3, 3)
         self.multiply_button.clicked.connect(self.multiply)
 
+        self.equals_button = QPushButton("=", self)
+        self.numbers_layout.addWidget(self.equals_button, 3, 2)
+        self.equals_button.clicked.connect(self.equals)
+
+        self.backspace_button = QPushButton("⌫", self)
+        self.numbers_layout.addWidget(self.backspace_button, 3, 4)
+        self.backspace_button.clicked.connect(self.backspace)
+
+        self.clear_entry_button = QPushButton("CE", self)
+        self.numbers_layout.addWidget(self.clear_entry_button, 2, 4)
+        self.clear_entry_button.clicked.connect(self.clear)
+
+        self.current_value = ""
+        self.pending_operator = None
+        self.last_value = 0
+
     def keyPressEvent(self, a0):
         nums = {
             Qt.Key.Key_0: 0,
@@ -63,24 +81,63 @@ class CalculatorWindow(QMainWindow):
             self.number_pressed(num=str(nums[a0.key()]))
         return super().keyPressEvent(a0)
 
-    def plus(self, _):
-        # TODO: Dima Sdelai
-        pass
+    def plus(self):
+        self.process_operator("+")
 
-    def minus(self, _):
-        # TODO: Dima blin nu sdelai
-        pass
+    def minus(self):
+        self.process_operator("-")
 
-    def divide(self, _):
-        # TODO: NUUUU DIMAA BLIN
-        pass
+    def divide(self):
+        self.process_operator("/")
 
-    def multiply(self, _):
-        # TODO: dima... ya shas драться nachnu blin
-        pass
+    def multiply(self):
+        self.process_operator("*")
+
+    def equals(self):
+        if self.pending_operator is not None:
+            try:
+                current_value = float(self.monitor.text())
+                if self.pending_operator == "+":
+                    self.last_value += current_value
+                elif self.pending_operator == "-":
+                    self.last_value -= current_value
+                elif self.pending_operator == "*":
+                    self.last_value *= current_value
+                elif self.pending_operator == "/":
+                    if current_value == 0:
+                        raise ZeroDivisionError("Нельзя делить на ноль")
+                    self.last_value /= current_value
+                self.monitor.setText(str(self.last_value))
+                self.pending_operator = None
+            except ZeroDivisionError as e:
+                self.monitor.setText("Error: Деление на 0")
+            except Exception as e:
+                self.monitor.setText("Error")
+
+    def clear(self):
+        self.monitor.clear()
+        self.current_value = ""
+        self.last_value = 0
+        self.pending_operator = None
+
+    def backspace(self):
+        current_text = self.monitor.text()
+        if current_text:
+            self.monitor.setText(current_text[:-1])
 
     def number_pressed(self, num):
         self.monitor.setText(self.monitor.text() + num)
+
+    def process_operator(self, operator):
+        try:
+            if self.pending_operator is None:
+                self.last_value = float(self.monitor.text())
+            else:
+                self.equals()
+            self.pending_operator = operator
+            self.monitor.clear()
+        except Exception as e:
+            self.monitor.setText("Error")
 
 
 def main():
