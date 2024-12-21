@@ -53,6 +53,10 @@ class CalculatorWindow(QMainWindow):
         self.numbers_layout.addWidget(self.multiply_button, 3, 3)
         self.multiply_button.clicked.connect(self.multiply)
 
+        self.invert_button = QPushButton("inv", self)
+        self.numbers_layout.addWidget(self.invert_button, 0, 5)
+        self.invert_button.clicked.connect(self.inv)
+
         self.equals_button = QPushButton("=", self)
         self.numbers_layout.addWidget(self.equals_button, 2, 5)
         self.equals_button.clicked.connect(self.equals)
@@ -133,6 +137,7 @@ class CalculatorWindow(QMainWindow):
         self.process_operator("+")
 
     def minus(self):
+
         self.process_operator("-")
 
     def divide(self):
@@ -176,6 +181,14 @@ class CalculatorWindow(QMainWindow):
 
         if current_text:
             self.monitor.setText(current_text[:-1])
+
+    def inv(self):
+        try:
+            num = float(self.monitor.text())
+            if num:
+                self.monitor.setText(str(-1*(num)))
+        except Exception as e:
+            self.monitor.setText("Error")
 
     def sin(self):
         try:
