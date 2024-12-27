@@ -32,6 +32,7 @@ jobs:
 
       - name: Build .deb package
         run: |
+          pip install pyinstaller
           mkdir -p ~/calcul/DEBIAN
           mkdir -p ~/calcul/usr/local/bin
     
