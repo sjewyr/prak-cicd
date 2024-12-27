@@ -37,9 +37,9 @@ jobs:
           mkdir -p ~/calcul/usr/local/bin
     
           pyinstaller --onefile --windowed main.py
-          cp dist/your_script ~/calcul/usr/local/bin/
+          cp dist/main ~/calcul/usr/local/bin/
       
-          echo "Package: your-app
+          echo "Package: calcul
           Version: 1.0
           Architecture: amd64
           Maintainer: Your Name <your.email@example.com>
