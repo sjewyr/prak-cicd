@@ -69,14 +69,15 @@ jobs:
           echo "#!/bin/bash
           # Активируем виртуальное окружение
           source /usr/local/lib/python3.*/dist-packages/calcul/venv/bin/activate
+          cp requirements.txt ~/calcul/usr/local/lib/python3.*/dist-packages/calcul/requirements.txt
           # Устанавливаем зависимости в виртуальном окружении, если нужно
-          pip install --no-cache-dir -r /usr/local/lib/python3.*/dist-packages/calcul/requirements.txt" > ~/calcul/DEBIAN/postinst
+          pip install --no-cache-dir -r ~/calcul/usr/local/lib/python3.*/dist-packages/calcul/requirements.txt" > ~/calcul/DEBIAN/postinst
           
           # Делаем postinst исполняемым
           chmod +x ~/calcul/DEBIAN/postinst
       
           # Копируем файл requirements.txt в пакет
-          cp requirements.txt ~/calcul/usr/local/lib/python3.*/dist-packages/calcul/requirements.txt
+          #cp requirements.txt ~/calcul/usr/local/lib/python3.*/dist-packages/calcul/requirements.txt
       
           # Создание deb-пакета
           dpkg-deb --build ~/calcul
